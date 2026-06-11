@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Horizon - Hotel Management Panel</title>
+    <!-- Google Fonts Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-icon">🏨</span>
+                <h1>Grand Horizon</h1>
+                <p>Database Management System</p>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" id="nav-btn-dashboard" onclick="showTab('dashboard')">
+                    <span class="btn-icon">📊</span> Dashboard
+                </button>
+                <button class="nav-btn" id="nav-btn-tables" onclick="showTab('tables')">
+                    <span class="btn-icon">🗂️</span> Database Tables
+                </button>
+                <button class="nav-btn" id="nav-btn-queries" onclick="showTab('queries')">
+                    <span class="btn-icon">🔍</span> Custom Queries
+                </button>
+                <button class="nav-btn" id="nav-btn-procedures" onclick="showTab('procedures')">
+                    <span class="btn-icon">⚙️</span> Stored Procedures
+                </button>
+                <button class="nav-btn" id="nav-btn-triggers" onclick="showTab('triggers')">
+                    <span class="btn-icon">⚡</span> Trigger Demo
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>DBMS Project AD044</p>
+                <span class="status-badge connected">Connected to MySQL</span>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="main-content">
+            <!-- Toast notification container -->
+            <div id="toast-container"></div>
+
+            <!-- DASHBOARD TAB -->
+            <section id="tab-dashboard" class="tab-panel active">
+                <header class="panel-header">
+                    <h2>Welcome to the Grand Horizon Control Panel</h2>
+                    <p>Overview of the Hotel Management Database & Operational Metrics.</p>
+                </header>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Total Rooms</span>
+                            <span class="stat-icon">🛏️</span>
+                        </div>
+                        <h3 id="stat-rooms-count">27</h3>
+                        <p class="stat-desc">Standard, Deluxe, and Suites</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Active Bookings</span>
+                            <span class="stat-icon">📅</span>
+                        </div>
+                        <h3 id="stat-bookings-count">5</h3>
+                        <p class="stat-desc">Live reservations in system</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Total Guests</span>
+                            <span class="stat-icon">👥</span>
+                        </div>
+                        <h3 id="stat-guests-count">5</h3>
+                        <p class="stat-desc">Registered profiles</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">System Performance</span>
+                            <span class="stat-icon">🚀</span>
+                        </div>
+                        <h3>Active</h3>
+                        <p class="stat-desc">Triggers & Procedures enabled</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-details">
+                    <div class="info-card">
+                        <h3>Database Operations Demo</h3>
+                        <p>This application demonstrates advanced relational database management capabilities including:</p>
+                        <ul class="features-list">
+                            <li><strong>CRUD Operations:</strong> Live Insert, Update, and Delete on Guests, Rooms, and Bookings.</li>
+                            <li><strong>Relational Queries:</strong> Multi-table Inner Joins, Subqueries, Left Joins, and NOT EXISTS clauses.</li>
+                            <li><strong>Stored Procedures:</strong> Calculate billing sums and query availabilities dynamically based on date intervals.</li>
+                            <li><strong>Triggers:</strong> Real-time Room Status Auto-Updates and Overlapping Double-Booking Prevention.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TABLES VIEW TAB -->
+            <section id="tab-tables" class="tab-panel">
+                <header class="panel-header">
+                    <h2>Database Tables</h2>
+                    <p>Perform direct operations: View, Create (Insert), Modify (Update), or Remove (Delete) records.</p>
+                </header>
+                <div class="table-selector-bar">
+                    <label for="table-select">Select Table: </label>
+                    <select id="table-select" onchange="loadTableData()">
+                        <option value="Guest">Guests</option>
+                        <option value="Room">Rooms</option>
+                        <option value="Booking">Bookings</option>
+                        <option value="Staff">Staff</option>
+                        <option value="Payment">Payments</option>
+                        <option value="Service">Services</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openInsertModal()">＋ Add Record</button>
+                </div>
+
+                <!-- Database Data Table Wrapper -->
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table id="db-data-table">
+                            <thead>
+                                <tr id="db-table-headers">
+                                    <!-- Dynamic headers will be inserted here -->
+                                </tr>
+                            </thead>
+                            <tbody id="db-table-rows">
+                                <!-- Dynamic rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CUSTOM QUERIES TAB -->
+            <section id="tab-queries" class="tab-panel">
+                <header class="panel-header">
+                    <h2>Custom Database Queries</h2>
+                    <p>Execute structured query statements required for management reports.</p>
+                </header>
+                <div class="queries-container">
+                    <!-- Query List -->
+                    <div class="queries-sidebar">
+                        <div class="query-card active" id="qc-1" onclick="runQuery(1)">
+                            <div class="query-num">Query 1</div>
+                            <h4>Retrieve all guests</h4>
+                            <p>Basic SELECT statement</p>
+                        </div>
+                        <div class="query-card" id="qc-2" onclick="runQuery(2)">
+                            <div class="query-num">Query 2</div>
+                            <h4>Display rooms of specific type</h4>
+                            <p>Filter by Room Type (Deluxe/Suite/Standard)</p>
+                        </div>
+                        <div class="query-card" id="qc-3" onclick="runQuery(3)">
+                            <div class="query-num">Query 3</div>
+                            <h4>Booking & Guest details</h4>
+                            <p>2-Table INNER JOIN</p>
+                        </div>
+                        <div class="query-card" id="qc-4" onclick="runQuery(4)">
+                            <div class="query-num">Query 4</div>
+                            <h4>Booking, Guest & Room details</h4>
+                            <p>3-Table JOIN</p>
+                        </div>
+                        <div class="query-card" id="qc-5" onclick="runQuery(5)">
+                            <div class="query-num">Query 5</div>
+                            <h4>Count rooms per room type</h4>
+                            <p>GROUP BY aggregation</p>
+                        </div>
+                        <div class="query-card" id="qc-6" onclick="runQuery(6)">
+                            <div class="query-num">Query 6</div>
+                            <h4>Room types having > 20 rooms</h4>
+                            <p>HAVING filter clause</p>
+                        </div>
+                        <div class="query-card" id="qc-7" onclick="runQuery(7)">
+                            <div class="query-num">Query 7</div>
+                            <h4>High-paying guest records</h4>
+                            <p>Subquery matching > average payments</p>
+                        </div>
+                        <div class="query-card" id="qc-8" onclick="runQuery(8)">
+                            <div class="query-num">Query 8</div>
+                            <h4>Guests with more bookings than specific guest</h4>
+                            <p>Correlated Subquery</p>
+                        </div>
+                        <div class="query-card" id="qc-9" onclick="runQuery(9)">
+                            <div class="query-num">Query 9</div>
+                            <h4>Display all rooms & reservation status</h4>
+                            <p>LEFT JOIN including unbooked rooms</p>
+                        </div>
+                        <div class="query-card" id="qc-10" onclick="runQuery(10)">
+                            <div class="query-num">Query 10</div>
+                            <h4>Retrieve unused services</h4>
+                            <p>NOT EXISTS clause</p>
+                        </div>
+                    </div>
+
+                    <!-- Query Result View -->
+                    <div class="query-results-area">
+                        <div class="results-card">
+                            <div class="results-header">
+                                <h3 id="current-query-title">Query 1: Retrieve all guests</h3>
+                                <pre id="current-query-sql">SELECT guest_id, name, phone, address, id_proof FROM Guest;</pre>
+                            </div>
+                            <div id="query-filter-bar" class="query-filter-bar hidden">
+                                <!-- Dynamic inputs for parameterized queries (e.g. Query 2 room type, Query 8 guest id) -->
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr id="query-table-headers"></tr>
+                                    </thead>
+                                    <tbody id="query-table-rows">
+                                        <tr><td colspan="10" style="text-align: center;">Click a query on the left to execute and view results.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STORED PROCEDURES TAB -->
+            <section id="tab-procedures" class="tab-panel">
+                <header class="panel-header">
+                    <h2>Stored Procedures</h2>
+                    <p>Execute complex transactional operations configured directly inside MySQL.</p>
+                </header>
+                <div class="procedures-grid">
+                    <!-- Procedure 1 Form -->
+                    <div class="form-card">
+                        <h3>Procedure 1: Check Room Availability</h3>
+                        <p class="form-card-desc">Returns a list of rooms that have no reservation conflicts within the specified date range.</p>
+                        <form id="proc-availability-form" onsubmit="executeProcAvailability(event)">
+                            <div class="form-group">
+                                <label for="proc-checkin">Check-in Date:</label>
+                                <input type="date" id="proc-checkin" required value="2026-06-11">
+                            </div>
+                            <div class="form-group">
+                                <label for="proc-checkout">Check-out Date:</label>
+                                <input type="date" id="proc-checkout" required value="2026-06-15">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Run availability check</button>
+                        </form>
+                    </div>
+
+                    <!-- Procedure 2 Form -->
+                    <div class="form-card">
+                        <h3>Procedure 2: Generate Guest Final Bill</h3>
+                        <p class="form-card-desc">Calculates the duration-based room stay charge, sums up service consumption charges, computes the net amount and balance pending.</p>
+                        <form id="proc-bill-form" onsubmit="executeProcBill(event)">
+                            <div class="form-group">
+                                <label for="proc-booking-id">Booking:</label>
+                                <select id="proc-booking-id" required>
+                                    <!-- Dynamically filled with booking options -->
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Generate Final Bill</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Stored Procedure Output Section -->
+                <div class="results-card procedure-results hidden" id="procedure-output-card">
+                    <h3 id="procedure-output-title">Procedure Results Output</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr id="proc-table-headers"></tr>
+                            </thead>
+                            <tbody id="proc-table-rows"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRIGGERS DEMO TAB -->
+            <section id="tab-triggers" class="tab-panel">
+                <header class="panel-header">
+                    <h2>Trigger Scenario Demonstrations</h2>
+                    <p>Interact with real-world scenarios to see MySQL triggers dynamically run and protect data integrity.</p>
+                </header>
+
+                <div class="scenarios-grid">
+                    <!-- Scenario 1 Card -->
+                    <div class="scenario-card">
+                        <div class="scenario-badge badge-info">Trigger 1</div>
+                        <h3>Room Status Auto-Update</h3>
+                        <p>When a guest makes a booking for a room, a trigger (`after_booking_insert`) automatically updates that room's status column to <strong>'Booked'</strong>. Similarly, deleting a booking resets it to <strong>'Available'</strong>.</p>
+                        
+                        <div class="scenario-workspace">
+                            <h4>Test Status Update Trigger</h4>
+                            <div class="form-group">
+                                <label for="trigger-room-select">Select Available Room:</label>
+                                <select id="trigger-room-select">
+                                    <!-- Dynamic list of Available rooms -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="trigger-guest-select">Select Guest:</label>
+                                <select id="trigger-guest-select">
+                                    <!-- Dynamic list of guests -->
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" onclick="simulateBookingTrigger()">Create Booking & Check Status</button>
+                        </div>
+                    </div>
+
+                    <!-- Scenario 2 Card -->
+                    <div class="scenario-card">
+                        <div class="scenario-badge badge-warning">Trigger 2</div>
+                        <h3>Double Booking Prevention</h3>
+                        <p>A trigger (`prevent_double_booking`) intercepts insertion on the Booking table. If another booking already reserves the same room during overlapping dates, the transaction is rejected and MySQL signals an error.</p>
+                        
+                        <div class="scenario-workspace">
+                            <h4>Simulate Double Booking Clash</h4>
+                            <div class="overlap-info-box">
+                                <strong>Existing Booking Example:</strong><br>
+                                Guest John Doe has booked Room 1 from <code class="code-highlight">2026-06-10</code> to <code class="code-highlight">2026-06-15</code>.
+                            </div>
+                            <div class="form-group">
+                                <label for="double-booking-guest">Select Guest:</label>
+                                <select id="double-booking-guest">
+                                    <!-- Dynamic list of guests -->
+                                </select>
+                            </div>
+                            <div class="date-row">
+                                <div class="form-group">
+                                    <label for="double-booking-in">Check-in:</label>
+                                    <input type="date" id="double-booking-in" value="2026-06-12" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="double-booking-out">Check-out:</label>
+                                    <input type="date" id="double-booking-out" value="2026-06-14" required>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger btn-block" onclick="simulateDoubleBookingTrigger()">Attempt Double Booking</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Log console -->
+                <div class="console-card">
+                    <h3>Simulation Output & Trigger Log</h3>
+                    <div class="console-box" id="trigger-console-log">
+                        <span class="console-placeholder">Waiting for simulation triggers...</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL FOR INSERT / EDIT RECORDS -->
+    <div id="crud-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-title">Add Database Record</h3>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="crud-form" onsubmit="handleFormSubmit(event)">
+                    <div id="modal-form-fields">
+                        <!-- Dynamic fields based on selected table -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="modal-submit-btn">Save Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
